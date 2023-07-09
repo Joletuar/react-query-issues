@@ -18,7 +18,7 @@ export const useLabels = () => {
     queryKey: ['labels'],
     queryFn: getLabels,
     // refetchOnWindowFocus: false, // Evitar que haga la petición de nuevo cuando se recupere el foco de la pantalla
-    // staleTime: 1000 * 60 * 60, // está en milesimimas de segundos. Con esto los labels solo se van a recargar cada hora, o cuando se haga hard refresh de la página
+    staleTime: 1000 * 60 * 60, // está en milesimimas de segundos. Con esto los labels solo se van a recargar cada hora, o cuando se haga hard refresh de la página
     placeholderData: [
       // Data que se mostrará por defecto hasta que se obtenga la información del fetch
       // Debe ser un objeto que cumpla la interfaz que definimos
