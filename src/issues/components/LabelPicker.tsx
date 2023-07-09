@@ -1,26 +1,47 @@
-import { useQuery } from '@tanstack/react-query';
+import { FC } from 'react';
 
-// Fetcher para obtener data
+import { useLabels } from '../hooks/useLabels';
+import { Loading } from '../../shared/components';
 
-const getLabels = async () => {
-  const res = await fetch('https://api.github.com/repos/facebook/react/labels');
-  const data = await res.json();
+interface Props {
+  selectedLabels: string[];
+  onChange: (labelName: string) => void;
+}
 
-  return data;
-};
+export const LabelPicker: FC<Props> = ({ selectedLabels, onChange }) => {
+  const { labelsQuery } = useLabels();
 
-export const LabelPicker = () => {
-  // Uso del useQuery
-  const labelsQuery = useQuery(['labels'], getLabels);
+  // ! hay una diferencia entre isLoading vs isFetching
+  if (labelsQuery.isLoading) return <Loading />;
 
   return (
-    <div>
-      <span
-        className='badge rounded-pill m-1 label-picker'
-        style={{ border: `1px solid #ffccd3`, color: '#ffccd3' }}
-      >
-        Primary
-      </span>
-    </div>
+    <>
+      {labelsQuery.data!?.map((label) => (
+        <span
+          className='badge rounded-pill m-1 label-picker'
+          style={{
+            border: `1px solid #${label.color}`,
+            color: selectedLabels.includes(label.name)
+              ? 'black'
+              : `#${label.color}`,
+            backgroundColor: selectedLabels.includes(label.name)
+              ? `rgba(${parseInt(label.color.slice(0, 2), 16)},${parseInt(
+                  label.color.slice(2, 4),
+                  16
+                )},${parseInt(label.color.slice(4, 6), 16)}, 0.8)`
+              : '',
+          }}
+          key={label.id}
+          onClick={() => onChange(label.name)}
+        >
+          {label.name}
+        </span>
+      ))}
+    </>
   );
 };
+
+// isLoading: es cuando se está cargando la data por primera vez, es decir cuando no tenemos nada en caché y no se puede mostrar nada
+// isFetching: siempre se va a disparar cuando hagamos un petición, es decir, es cuando tenemos data en caché (data no actualizada) para mostrar, pero estamos haciendo una petición al backend para obtener nueva data
+
+// De preferencia se utiliza mas isLoading
