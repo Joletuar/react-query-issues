@@ -2,8 +2,12 @@ import { FC } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { FiInfo, FiMessageSquare, FiCheckCircle } from 'react-icons/fi';
+import { useQueryClient } from '@tanstack/react-query';
+
 import { Issue, State } from '../interfaces';
+
 import { formattedDate } from '../../utils/formattedDate';
+import { getIssue, getIssueCommets } from '../hooks';
 
 interface Props {
   issue: Issue;
@@ -11,11 +15,37 @@ interface Props {
 
 export const IssueItem: FC<Props> = ({ issue }) => {
   const navigate = useNavigate();
+  const queryCliente = useQueryClient();
+
+  // Realizamos un prefetch de la petición cuando pasemos el mouse encima
+
+  const prefetchData = () => {
+    queryCliente.prefetchQuery({
+      queryKey: ['issue', issue.number], // pasamos el key que identifica el cache
+      queryFn: () => getIssue(issue.number), // pasamos el fetch para obtener los datos
+    });
+
+    queryCliente.prefetchQuery({
+      queryKey: ['issue', issue.number, 'comments'],
+      queryFn: () => getIssueCommets(issue.number),
+    });
+  };
+
+  // Si ya tenemos la data de antenamo la seteamos directamente en el cache para no volver hacer de nuevo la petición
+  // Debido a que obtenemos el listado de los issues al momento de cargar la lista al principio
+  // dentro de esta respuesta ya tenemos la información de todos los queries
+  // usamos esta información para setearlo directamente al cache cuando se pase el mouse
+  // y asi evitar realizar un fetch de mas para cargar los datos
+
+  const presetData = () => {
+    queryCliente.setQueryData(['issue', issue.number], issue); // pasamos el key para el cache, pasamos la data que vamos a seteear
+  };
 
   return (
     <div
       className='card mb-2 issue'
       onClick={() => navigate(`/issues/issue/${issue.number}`)}
+      onMouseEnter={presetData}
     >
       <div className='card-body d-flex align-items-center'>
         {issue.state === State.Open ? (
