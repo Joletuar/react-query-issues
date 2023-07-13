@@ -39,6 +39,11 @@ export const IssueItem: FC<Props> = ({ issue }) => {
 
   const presetData = () => {
     queryCliente.setQueryData(['issue', issue.number], issue); // pasamos el key para el cache, pasamos la data que vamos a seteear
+
+    // queryCliente.prefetchQuery({
+    //   queryKey: ['issue', issue.number, 'comments'],
+    //   queryFn: () => getIssueCommets(issue.number),
+    // });
   };
 
   return (
