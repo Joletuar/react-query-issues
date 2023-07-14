@@ -68,13 +68,23 @@ export const IssueItem: FC<Props> = ({ issue }) => {
           <span className='issue-subinfo'>
             {`#${issue.number} ${
               issue.state === State.Open ? 'opened' : 'closed'
-            } ${
-              formattedDate(issue.created_at) > 1
-                ? formattedDate(issue.created_at) + ' days ago'
-                : formattedDate(issue.created_at) + ' day ago'
-            } by `}
+            } ${formattedDate(issue.created_at)} by `}
             <span className='fw-bold'>{issue.user.login}</span>
           </span>
+          <div>
+            {issue.labels.map((label) => (
+              <span
+                className='badge rounded-pill m-1'
+                key={label.id}
+                style={{
+                  backgroundColor: `#${label.color}`,
+                  color: 'black',
+                }}
+              >
+                {label.name}
+              </span>
+            ))}
+          </div>
         </div>
 
         <div className='d-flex align-items-center'>

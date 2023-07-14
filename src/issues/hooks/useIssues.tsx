@@ -16,6 +16,13 @@ const getIssues = async (labels: string[], state?: State): Promise<Issue[]> => {
 
   if (state) params.append('state', state); // agregamos los parametros
 
+  // Si recibimos los labels hacemos la petición de los issues filtrado por label
+
+  if (labels.length) {
+    const labelString = labels.join(',');
+    params.append('labels', labelString);
+  }
+
   const { data } = await githubApi.get<Issue[]>('/issues', { params });
 
   return data;
