@@ -11,7 +11,7 @@ export const ListView = () => {
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
   const [estado, setEstado] = useState<State>();
 
-  const { issuesQuery, page } = useIssues({
+  const { issuesQuery, page, nextPage, prevPage } = useIssues({
     state: estado,
     labels: selectedLabels,
   });
