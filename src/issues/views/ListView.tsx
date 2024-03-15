@@ -9,10 +9,10 @@ import { State } from '../interfaces';
 
 export const ListView = () => {
   const [selectedLabels, setSelectedLabels] = useState<string[]>([]);
-  const [estado, setEstado] = useState<State>();
+  const [state, setState] = useState<State>();
 
   const { issuesQuery, page, nextPage, prevPage } = useIssues({
-    state: estado,
+    state,
     labels: selectedLabels,
   });
 
@@ -31,8 +31,8 @@ export const ListView = () => {
           <>
             <IssueList
               issues={issuesQuery.data || []}
-              state={estado}
-              onStateChange={(newState) => setEstado(newState)}
+              state={state}
+              onStateChange={setState}
             />
 
             <div className='d-flex justify-content-between align-items-center my-3'>
